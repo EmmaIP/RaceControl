@@ -17,7 +17,7 @@ public class EliminationRace extends Race{
     }
 
     public int getWarmingUpMinutes() {
-        return warmingUpMinutes;
+        return this.warmingUpMinutes;
     }
 
     public void setWarmingUpMinutes(int warmingUpMinutes) {

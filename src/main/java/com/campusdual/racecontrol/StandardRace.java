@@ -74,6 +74,9 @@ public class StandardRace extends Race{
         garage3.addCars(car6);
 
         StandardRace race1 = new StandardRace("Race1", 4);
+        StandardRace race2 = new StandardRace("Race2", 5);
+
+        race2.addOneGarage(garage1);
 
         race1.addMoreThanOneGarage(garage1);
         race1.addMoreThanOneGarage(garage2);

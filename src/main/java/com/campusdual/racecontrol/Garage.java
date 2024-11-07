@@ -42,7 +42,6 @@ public class Garage {
         Car car1 = new Car("Toyota", "Yaris");
         Car car2 = new Car("Ford", "Mondeo");
         Car car3 = new Car("Ford", "Fiesta");
-        Car car4 = new Car("Toyota", "Rav4");
 
         List<Car> carsList = new ArrayList<>();
 
@@ -50,7 +49,6 @@ public class Garage {
         garage1.addCars(car1);
         garage1.addCars(car2);
         garage1.addCars(car3);
-        garage1.addCars(car4);
 
         System.out.println(garage1.name);
         for (Car car : garage1.getCars()) {

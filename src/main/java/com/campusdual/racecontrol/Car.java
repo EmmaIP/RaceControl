@@ -52,7 +52,6 @@ public class Car {
         if (this.speed > this.MAX_SPEED) {
             this.speed = this.MAX_SPEED;
         }
-        //System.out.println(this.brand + " " + this.model + " has been accelerated to " + this.speed + " Km/h");
     }
 
     public void brake() {
@@ -60,7 +59,6 @@ public class Car {
         if (this.speed < 0) {
             this.speed = 0;
         }
-        //System.out.println(this.brand + " " + this.model + " has been braked to " + this.speed  + " Km/h");
     }
 
     public void randomSpeed() {

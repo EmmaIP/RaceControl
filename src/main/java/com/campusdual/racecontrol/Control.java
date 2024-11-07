@@ -15,7 +15,7 @@ package com.campusdual.racecontrol;
       retirando el coche que va en la última posición, cada minuto, hasta que sólo quede un coche).
     ✓ Aunque, las carreras sean diferentes, todas ellas tienen varias características en común; como puede ser registros
       de los garajes que participan en la carrera, que coches de cada garaje compiten, el podio de cada carrera, etc.
-    Los Torneos son agrupaciones de Carreras. Los Torneos tienen un nombre que los identifica y, normalmente, están
+    ✓ Los Torneos son agrupaciones de Carreras. Los Torneos tienen un nombre que los identifica y, normalmente, están
       formados por 10 carreras, aunque este número puede variar. En los Torneos, se registran los Garajes que van a
       participar en cada una de las carreras.
     ✓ Todas las Carreras y Torneos se disputan en circuitos de fórmula NASCAR que, dada su estructura, hace que los coches
@@ -25,8 +25,8 @@ package com.campusdual.racecontrol;
     ✓ El resultado de cualquier carrera dependerá de la distancia recorrida en el mismo tiempo por cada coche que
       participa en la carrera.
     ✓ El podio de una carrera son los 3 Coches que más distancia hayan recorrido en el mismo tiempo.
-    Un Torneo tendrá puntuaciones para cada coche que participe. Se entregarán puntuaciones a los coches del podio de
-    cada carrera, de mayor a menor, de manera proporcional. Estas puntuaciones son acumulativas para cada coche.
+    ✓ Un Torneo tendrá puntuaciones para cada coche que participe. Se entregarán puntuaciones a los coches del podio de
+      cada carrera, de mayor a menor, de manera proporcional. Estas puntuaciones son acumulativas para cada coche.
     El ganador del torneo será el coche que más puntos tenga al finalizar el torneo. En caso de empate, se divide el premio.
     En la aplicación, se pretende guardar el estado del programa, de manera que no sea necesario insertar de nuevo la
     información de los Coches, Garajes, Carreras y Torneos en un fichero.
