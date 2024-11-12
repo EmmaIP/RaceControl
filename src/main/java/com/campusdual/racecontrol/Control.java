@@ -43,49 +43,60 @@ public class Control {
 
     public void menu() {
         System.out.println("\nBienvenido a RaceControl");
+        System.out.println("Cómo se juega:");
+        System.out.println("Da de alta los vehículos");
+        System.out.println("Crea un garaje y añádeselos");
+        System.out.println("Escoge una carrera");
+        System.out.println("Que empiece el torneo");
 
-        int option;
+        List<Car> carsList = new ArrayList<>();
+        String brand = Utils.string("Escribe la marca del vehículo: ");
+        String model = Utils.string("Escribe el modelo: ");
+        Car car = new Car(brand, model);
 
-        do {
-            System.out.println("1. Crea tus vehículos");
-            System.out.println("2. Crea un garaje y añádele coches");
-            System.out.println("3. Escoge una carrera");
-            System.out.println("4. Eliminar un contacto");
-            System.out.println("5. Salir");
+        String nameG = Utils.string("Escribe el nombre del garaje al que pertenecen: ");
+        Garage garage = new Garage(nameG, carsList);
+        garage.addCars(car);
 
-            option = Utils.integer("Seleccione una opción: ");
-
-            switch (option) {
-                case 1:
-                    String brand = Utils.string("Escribe la marca del vehículo: ");
-                    String model = Utils.string("Escribe el modelo: ");
-
-                    Car car = new Car(brand, model);
-                    List<Car> carsList = new ArrayList<>();
-                    carsList.add(car);
-
-                    break;
-                case 2:
-
-                    break;
-                case 3:
-                    String selected = Utils.string("Escriba el código del contacto: ");
-
-                    break;
-                case 4:
-                    String deleted = Utils.string("Escriba el código del contacto a eliminar: ");
-
-                    break;
-                case 5:
-                    System.out.println("Hasta otra");
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
-                    break;
+        int option = Utils.integer("Para carrera estándar escribe 1 para carrera eliminatoria escribe 2: ");
+        if (option == 1) {
+            System.out.println("Las carreras estándar tienen una duración determinada");
+            System.out.println("Gana el vehículo que más distancia haya recorrido");
+            String nameR = Utils.string("Qué nombre le das a esta carrera: ");
+            int durationR = Utils.integer("Cúanto quieres que dure: ");
+            StandardRace raceS = new StandardRace(nameR, durationR);
+            int option1 = Utils.integer("Si solo participa un garaje escribe 1 si participa más de uno, escribe 2: ");
+            if(option1 == 1){
+                raceS.addOneGarage(garage);
+            }
+            else if (option1 == 2){
+                raceS.addMoreThanOneGarage(garage);
+            }
+            else {
+                System.out.println("Opción no válida.");
+            }
+        } else if (option == 2) {
+            System.out.println("En las carreras eliminatorias tienen un tiempo de calentamiento");
+            System.out.println("Al terminar este calentamiento, cada minuto se elimina el vehículo que quede en última posición");
+            System.out.println("Gana el último vehículo en ser eliminado");
+            String nameE = Utils.string("Qué nombre le das a esta carrera: ");
+            int minutesE = Utils.integer("Cúantos minutos de calentamiento tiene: ");
+            StandardRace raceE = new StandardRace(nameE, minutesE);
+            int option1 = Utils.integer("Si solo participa un garaje escribe 1 si participa más de uno, escribe 2: ");
+            if(option1 == 1){
+                raceE.addOneGarage(garage);
+            }
+            else if (option1 == 2){
+                raceE.addMoreThanOneGarage(garage);
+            }
+            else {
+                System.out.println("Opción no válida.");
             }
 
+        }else {
+            System.out.println("Opción no válida.");
         }
-        while(option != 5);
+
 
     }
     public static void main(String[] args) {
