@@ -27,34 +27,68 @@ package com.campusdual.racecontrol;
     ✓ El podio de una carrera son los 3 Coches que más distancia hayan recorrido en el mismo tiempo.
     ✓ Un Torneo tendrá puntuaciones para cada coche que participe. Se entregarán puntuaciones a los coches del podio de
       cada carrera, de mayor a menor, de manera proporcional. Estas puntuaciones son acumulativas para cada coche.
-    El ganador del torneo será el coche que más puntos tenga al finalizar el torneo. En caso de empate, se divide el premio.
+    ✓ El ganador del torneo será el coche que más puntos tenga al finalizar el torneo. En caso de empate, se divide el premio.
     En la aplicación, se pretende guardar el estado del programa, de manera que no sea necesario insertar de nuevo la
     información de los Coches, Garajes, Carreras y Torneos en un fichero.
     Este fichero debe cargarse cada vez que se inicia el programa y debe actualizarse antes de finalizar el programa.
 * */
 
+import com.campusdual.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Control {
-    private List<Championship> championshipList;
 
-    public Control() {
+    public void menu() {
+        System.out.println("\nBienvenido a RaceControl");
 
-        this.championshipList = new ArrayList<>();
-    }
+        int option;
 
-    public void addChampionship(Championship championship) {
-        if (championship != null) {
-            championshipList.add(championship);
-        } else {
-            System.out.println("Cannot add a null race.");
+        do {
+            System.out.println("1. Crea tus vehículos");
+            System.out.println("2. Crea un garaje y añádele coches");
+            System.out.println("3. Escoge una carrera");
+            System.out.println("4. Eliminar un contacto");
+            System.out.println("5. Salir");
+
+            option = Utils.integer("Seleccione una opción: ");
+
+            switch (option) {
+                case 1:
+                    String brand = Utils.string("Escribe la marca del vehículo: ");
+                    String model = Utils.string("Escribe el modelo: ");
+
+                    Car car = new Car(brand, model);
+                    List<Car> carsList = new ArrayList<>();
+                    carsList.add(car);
+
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+                    String selected = Utils.string("Escriba el código del contacto: ");
+
+                    break;
+                case 4:
+                    String deleted = Utils.string("Escriba el código del contacto a eliminar: ");
+
+                    break;
+                case 5:
+                    System.out.println("Hasta otra");
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+                    break;
+            }
+
         }
-    }
+        while(option != 5);
 
-    public void startChampionship() {
-        for (Championship c : championshipList) {
-            c.startChampionship();
-        }
+    }
+    public static void main(String[] args) {
+
     }
 }

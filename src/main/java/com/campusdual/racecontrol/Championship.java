@@ -1,7 +1,6 @@
 package com.campusdual.racecontrol;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Championship {
     private String name;
@@ -193,9 +192,5 @@ public class Championship {
         championship1.garagesInChampionship();
         championship1.startChampionship();
         championship1.showFinalScores();
-
-
-
-
     }
 }
