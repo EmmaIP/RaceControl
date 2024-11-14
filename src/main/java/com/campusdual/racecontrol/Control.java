@@ -34,72 +34,117 @@ package com.campusdual.racecontrol;
 * */
 
 import com.campusdual.Utils;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class Control {
 
-    public void menu() {
-        System.out.println("\nBienvenido a RaceControl");
-        System.out.println("Cómo se juega:");
-        System.out.println("Da de alta los vehículos");
-        System.out.println("Crea un garaje y añádeselos");
-        System.out.println("Escoge una carrera");
-        System.out.println("Que empiece el torneo");
-
+    public Garage generateGarage(String name){
         List<Car> carsList = new ArrayList<>();
-        String brand = Utils.string("Escribe la marca del vehículo: ");
-        String model = Utils.string("Escribe el modelo: ");
-        Car car = new Car(brand, model);
+        int number = 0;
+        do {
+            String brand = Utils.string("Car brand: ");
+            String model = Utils.string("Car model: ");
+            System.out.println("More cars write 2");
+            number = Utils.integer("No more cars, write 1: ");
+            Car car = new Car(brand, model);
+            carsList.add(car);
+        } while (number != 1);
+        Garage garage = new Garage(name, carsList);
+        return garage;
+    }
 
-        String nameG = Utils.string("Escribe el nombre del garaje al que pertenecen: ");
-        Garage garage = new Garage(nameG, carsList);
-        garage.addCars(car);
+    public void menu() {
+        System.out.println("\nWelcome to RaceControl");
+        System.out.println("Playing rules");
+        System.out.println("Register garages and their cars");
+        System.out.println("Choose a type of  car racing");
+        System.out.println("Let the game begins");
+        System.out.println("####################");
 
-        int option = Utils.integer("Para carrera estándar escribe 1 para carrera eliminatoria escribe 2: ");
+
+        int choice = 0;
+        List<Garage> listGarage= new ArrayList<>();
+        do {
+            String nameG = Utils.string("Write a name for the garage: ");
+            Garage garage = generateGarage(nameG);
+            listGarage.add(garage);
+            System.out.println("More garages write 2");
+            choice = Utils.integer("No more garages write 1: ");
+        }while (choice != 1);
+
+        System.out.println("####################");
+        int option = Utils.integer("For standard race write 1, for elimination race write 2: ");
         if (option == 1) {
-            System.out.println("Las carreras estándar tienen una duración determinada");
-            System.out.println("Gana el vehículo que más distancia haya recorrido");
-            String nameR = Utils.string("Qué nombre le das a esta carrera: ");
-            int durationR = Utils.integer("Cúanto quieres que dure: ");
+            System.out.println("Standard races have a duration");
+            System.out.println("The winner is the car with the longest distance");
+            String nameR = Utils.string("Choose a name for this race: ");
+            int durationR = Utils.integer("How long is the duration in hours?: ");
             StandardRace raceS = new StandardRace(nameR, durationR);
-            int option1 = Utils.integer("Si solo participa un garaje escribe 1 si participa más de uno, escribe 2: ");
+            int option1 = Utils.integer("For one participating garage write 1, for more than one participating garage write 2: ");
             if(option1 == 1){
-                raceS.addOneGarage(garage);
+                for (int i = 0; i < listGarage.size(); i++) {
+                    System.out.println(i +". "+ listGarage.get(i).getName());
+                }
+                int numberG = Utils.integer("Write de number of the chosen garage: ");
+                raceS.addOneGarage(listGarage.get(numberG));
+                System.out.println("All the cars are ready, Race cars " + raceS.getName() + " starts!");
+                raceS.startRace();
             }
-            else if (option1 == 2){
-                raceS.addMoreThanOneGarage(garage);
+            else if(option1 == 2){
+                int numberG = 0;
+                do {
+                    System.out.println("No more garages write 1");
+                    numberG = Utils.integer("Write de number of a chosen garage: ");
+                    raceS.addMoreThanOneGarage(listGarage.get(numberG));
+                } while (numberG != 1);
             }
-            else {
-                System.out.println("Opción no válida.");
-            }
-        } else if (option == 2) {
-            System.out.println("En las carreras eliminatorias tienen un tiempo de calentamiento");
-            System.out.println("Al terminar este calentamiento, cada minuto se elimina el vehículo que quede en última posición");
-            System.out.println("Gana el último vehículo en ser eliminado");
-            String nameE = Utils.string("Qué nombre le das a esta carrera: ");
-            int minutesE = Utils.integer("Cúantos minutos de calentamiento tiene: ");
-            StandardRace raceE = new StandardRace(nameE, minutesE);
-            int option1 = Utils.integer("Si solo participa un garaje escribe 1 si participa más de uno, escribe 2: ");
-            if(option1 == 1){
-                raceE.addOneGarage(garage);
-            }
-            else if (option1 == 2){
-                raceE.addMoreThanOneGarage(garage);
-            }
-            else {
-                System.out.println("Opción no válida.");
-            }
+            System.out.println("All the cars are ready, Race cars " + raceS.getName() + " starts!");
+                raceS.startRace();
 
-        }else {
-            System.out.println("Opción no válida.");
+        } else if (option == 2) {
+            System.out.println("Elimination races have a warming up time");
+            System.out.println("After that time, every minute the car in the last position is eliminated");
+            System.out.println("The winner is the car that is not eliminated");
+            String nameE = Utils.string("Choose a name for this race: ");
+            int minutesE = Utils.integer("How long is the warming up time in minutes?: ");
+            StandardRace raceE = new StandardRace(nameE, minutesE);
+            int option2 = Utils.integer("For one participating garage write 1, for more than one participating garage write 2: ");
+            if(option2 == 1){
+                for (int i = 0; i < listGarage.size(); i++) {
+                    System.out.println(i +". "+ listGarage.get(i).getName());
+                }
+                int numberG = Utils.integer("Write de number of the chosen garage: ");
+                raceE.addOneGarage(listGarage.get(numberG));
+                System.out.println("All the cars are ready, Race cars " + raceE.getName() + " starts!");
+                raceE.startRace();
+            }
+            else if (option2 == 2){
+                int numberG = 0;
+                do {
+                    System.out.println("No more garages write 1");
+                    numberG = Utils.integer("Write de number of a chosen garage: ");
+                    raceE.addMoreThanOneGarage(listGarage.get(numberG));
+                } while (numberG != 1);
+                System.out.println("All the cars are ready, Race cars " + raceE.getName() + " starts!");
+                raceE.startRace();
+            }
         }
+
+        List<Race> racesList = new ArrayList<>();
+        String nameC = Utils.string("Qué nombre le quieres dar al torneo: ");
+
+        Championship championship = new Championship(nameC,racesList);
 
 
     }
-    public static void main(String[] args) {
 
+
+
+    public static void main(String[] args) {
+        Control control = new Control();
+        control.menu();
     }
 }

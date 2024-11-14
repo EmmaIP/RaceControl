@@ -11,6 +11,7 @@ public class Garage {
     public Garage(String name, List<Car> cars) {
         this.name = name;
         this.carsList = cars;
+        this.putStick();
     }
 
     public String getName() {
@@ -38,6 +39,12 @@ public class Garage {
         }
     }
 
+    public void putStick(){
+        for (int i = 0; i < this.carsList.size(); i++) {
+            this.carsList.get(i).setStickGarage(this.name);
+        }
+    }
+
     public static void main(String[] args) {
         Car car1 = new Car("Toyota", "Yaris");
         Car car2 = new Car("Ford", "Mondeo");
@@ -50,9 +57,22 @@ public class Garage {
         garage1.addCars(car2);
         garage1.addCars(car3);
 
-        System.out.println(garage1.name);
+        System.out.println("The name of the garage is " + garage1.name + " and has the following cars:");
         for (Car car : garage1.getCars()) {
             System.out.println(car.getBrand() + " " + car.getModel() + " " + car.getStickGarage());
         }
+
+        List<Car> carsList2 = new ArrayList<>();
+        carsList2.add(car1);
+        carsList2.add(car2);
+        carsList2.add(car3);
+        Garage garage2 = new Garage("Custom", carsList2);
+        garage2.putStick();
+
+        System.out.println("The name of the garage is " + garage2.name + " and has the following cars:");
+        for (Car car : garage2.getCars()) {
+            System.out.println(car.getBrand() + " " + car.getModel() + " " + car.getStickGarage());
+        }
+
     }
 }

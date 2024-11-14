@@ -7,12 +7,14 @@ public class Car {
     private String model;
     private String stickGarage;
     private int speed;
+    private int points;
     private static final int MAX_SPEED = 250;
 
     public Car(String brand, String model) {
         this.brand = brand;
         this.model = model;
         this.speed = 0;
+        this.points = 0;
     }
 
     public String getBrand() {
@@ -47,6 +49,14 @@ public class Car {
         this.speed = speed;
     }
 
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
     public void accelerate() {
         this.speed += 30;
         if (this.speed > this.MAX_SPEED) {
@@ -73,9 +83,19 @@ public class Car {
     public static void main(String[] args) {
         Car car1 = new Car("Toyota", "Yaris");
         car1.accelerate();
+        System.out.println("The car: " + car1.getBrand() + " "
+        + car1.getModel() + " is moving at a speed of " + car1.getSpeed() + " km/h");
         car1.accelerate();
+        System.out.println("The car: " + car1.getBrand() + " "
+                + car1.getModel() + " is moving at a speed of " + car1.getSpeed() + " km/h");
         car1.accelerate();
+        System.out.println("The car: " + car1.getBrand() + " "
+                + car1.getModel() + " is moving at a speed of " + car1.getSpeed() + " km/h");
         car1.brake();
+        System.out.println("The car: " + car1.getBrand() + " "
+                + car1.getModel() + " is moving at a speed of " + car1.getSpeed() + " km/h");
         car1.randomSpeed();
+        System.out.println("The car: " + car1.getBrand() + " "
+                + car1.getModel() + " has a speed of " + car1.getSpeed() + " km/h");
     }
 }

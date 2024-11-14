@@ -6,12 +6,12 @@ public class Championship {
     private String name;
     private List<Race> racesList;
     private List<Garage> garagesInList;
-    private Map<Car, Integer> carPoints;
+
     public Championship(String name, List<Race> racesList) {
         this.name = name;
         this.racesList = racesList;
         this.garagesInList = new ArrayList<>();
-        this.carPoints= new HashMap<>();
+
     }
     public String getName() {
         return this.name;
@@ -32,13 +32,7 @@ public class Championship {
         this.garagesInList = garagesInList;
     }
 
-    public Map<Car, Integer> getCarPoints() {
-        return carPoints;
-    }
 
-    public void setCarPoints(Map<Car, Integer> carPoints) {
-        this.carPoints = carPoints;
-    }
 
     public void addRaces(Race race) {
         if (race != null) {
@@ -60,6 +54,8 @@ public class Championship {
             Map<Car, Integer> start= r.startRace();
             r.showPodium(start);
             scoreEveryRace(start);
+            showFinalScores(start);
+            System.out.println("###########");
         }
     }
 
@@ -68,36 +64,30 @@ public class Championship {
         sortedCars.sort((entry1, entry2) -> Integer.compare(entry2.getValue(), entry1.getValue()));
         for (int i = 0; i < Math.min(3, sortedCars.size()); i++) {
             Car car = sortedCars.get(i).getKey();
-            int points;
             if (i == 0) {
-                points = 10;
+                car.setPoints(10);
             } else if (i == 1) {
-                points = 5;
+                car.setPoints(5);
             } else {
-                points = 1;
+                car.setPoints(1);
             }
-            this.carPoints.put(car, carPoints.getOrDefault(car, 0) + points);
         }
     }
 
-    public void showFinalScores() {
+    public void showFinalScores(Map<Car, Integer> start) {
         System.out.println("Final Scores:");
-        Map<Car, Integer> sortedMap = new LinkedHashMap<>();
-        this.carPoints.entrySet().stream()
-                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
-                .forEachOrdered(entry -> {
-                    sortedMap.put(entry.getKey(), entry.getValue());
-                    System.out.println(entry.getKey().getBrand()+ " " + entry.getKey().getModel() + " from Garage "
-                            + entry.getKey().getStickGarage() + ": " + entry.getValue() + " points");
-                });
+        List<Map.Entry<Car, Integer>> sortedCars = new ArrayList<>(start.entrySet());
+        sortedCars.sort((entry1, entry2) -> Integer.compare(entry2.getValue(), entry1.getValue()));
         int value = 0;
         int count = 0;
-        for (Map.Entry<Car, Integer> entry: sortedMap.entrySet()) {
-            if(count == 1 && entry.getValue() == value) {
+        for (int i = 0; i < sortedCars.size(); i++) {
+            Car car = sortedCars.get(i).getKey();
+            if(count == 1 && car.getPoints() == value) {
                 System.out.println("There is a tie, two winners for the prize");
             }
-            value = entry.getValue();
+            value = car.getPoints();
             count++;
+            System.out.println("- " + car.getBrand() + " " + car.getModel() + " " + car.getPoints() + " points");
         }
     }
 
@@ -177,7 +167,6 @@ public class Championship {
         race4.addMoreThanOneGarage(garage3);
         race4.addMoreThanOneGarage(garage4);
         race4.addMoreThanOneGarage(garage5);
-
         race5.addOneGarage(garage5);
 
         List<Race> racesList = new ArrayList<>();
@@ -190,7 +179,8 @@ public class Championship {
         championship1.addRaces(race5);
 
         championship1.garagesInChampionship();
+        System.out.println("#################");
         championship1.startChampionship();
-        championship1.showFinalScores();
+
     }
 }

@@ -17,7 +17,7 @@ public class StandardRace extends Race{
     @Override
     public Map<Car, Integer> startRace() {
 
-        System.out.println("Start race");
+        System.out.println("Start race: " + this.getName());
         Map<Car, Integer> distanceByCar = new HashMap<>();
         for (Car c : this.getCarsInRace()) {
             distanceByCar.put(c, 0);
@@ -25,7 +25,9 @@ public class StandardRace extends Race{
         for (int i = 0; i < this.duration; i++) {
             System.out.println("Hour " + (i + 1));
             for (Car c : this.getCarsInRace()) {
-                c.randomSpeed();
+                for (int j = 0; j < 60; j++) {
+                    c.randomSpeed();
+                }
                 int distanceByHour = c.getSpeed();
                 int totalDistanceByCar = distanceByCar.get(c) + distanceByHour;
                 distanceByCar.put(c,totalDistanceByCar);
@@ -76,14 +78,16 @@ public class StandardRace extends Race{
         StandardRace race1 = new StandardRace("Race1", 4);
         StandardRace race2 = new StandardRace("Race2", 5);
 
-        race2.addOneGarage(garage1);
-
         race1.addMoreThanOneGarage(garage1);
         race1.addMoreThanOneGarage(garage2);
         race1.addMoreThanOneGarage(garage3);
         race1.showDetailsRace();
-        Map<Car, Integer> start= race1.startRace();
-        race1.showPodium(start);
+        Map<Car, Integer> start1= race1.startRace();
+        race1.showPodium(start1);
+        System.out.println("#################");
+        race2.addOneGarage(garage1);
+        Map<Car, Integer> start2= race2.startRace();
+        race2.showPodium(start2);
 
     }
 }

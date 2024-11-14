@@ -54,7 +54,7 @@ public class EliminationRace extends Race{
 
         System.out.println("Warming Up");
         warmingUp();
-        System.out.println("Start race");
+        System.out.println("Start race: " + this.getName());
 
         List<Car> remainingCars = new ArrayList<>(this.getCarsInRace());
 
@@ -114,13 +114,19 @@ public class EliminationRace extends Race{
         garage3.addCars(car6);
 
         EliminationRace race1 = new EliminationRace("Race1", 4);
-
         race1.addMoreThanOneGarage(garage1);
         race1.addMoreThanOneGarage(garage2);
         race1.addMoreThanOneGarage(garage3);
         race1.showDetailsRace();
         Map<Car, Integer> start= race1.startRace();
         race1.showPodium(start);
+        System.out.println("#################");
+        EliminationRace race2 = new EliminationRace("Race2", 10);
+        race2.addOneGarage(garage1);
+        race2.showDetailsRace();
+        Map<Car, Integer> start2= race2.startRace();
+        race2.showPodium(start2);
+
 
     }
 

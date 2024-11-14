@@ -48,7 +48,6 @@ public abstract class Race {
             for (Car c : garage.getCars()) {
                 this.carsInRace.add(c);
             }
-            //System.out.println("Every car from " + garage.getName() + " is in the race");
         }
         else{
             System.out.println("Cannot add a null garage");
@@ -61,7 +60,7 @@ public abstract class Race {
             int randomIndex = Utils.getRandomNumberInRange(0, cars.size() - 1);
             Car carIn = cars.get(randomIndex);
             this.carsInRace.add(carIn);
-            //System.out.println("One random car from " + garage.getName() + " is in the race");
+
         }
         else{
             System.out.println("Cannot add a null garage");
