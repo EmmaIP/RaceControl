@@ -54,9 +54,9 @@ public class Championship {
             Map<Car, Integer> start= r.startRace();
             r.showPodium(start);
             scoreEveryRace(start);
-            showFinalScores(start);
             System.out.println("###########");
         }
+        showFinalScores();
     }
 
     public void scoreEveryRace(Map<Car, Integer> start){
@@ -65,29 +65,38 @@ public class Championship {
         for (int i = 0; i < Math.min(3, sortedCars.size()); i++) {
             Car car = sortedCars.get(i).getKey();
             if (i == 0) {
-                car.setPoints(10);
+                car.setPoints(car.getPoints() + 10);
             } else if (i == 1) {
-                car.setPoints(5);
+                car.setPoints(car.getPoints() + 5);
             } else {
-                car.setPoints(1);
+                car.setPoints(car.getPoints() + 1);
             }
         }
     }
 
-    public void showFinalScores(Map<Car, Integer> start) {
-        System.out.println("Final Scores:");
-        List<Map.Entry<Car, Integer>> sortedCars = new ArrayList<>(start.entrySet());
-        sortedCars.sort((entry1, entry2) -> Integer.compare(entry2.getValue(), entry1.getValue()));
+    public void showFinalScores() {
+        System.out.println("#################### Final Scores for the Championship " + this.name +" #####################:");
         int value = 0;
         int count = 0;
-        for (int i = 0; i < sortedCars.size(); i++) {
-            Car car = sortedCars.get(i).getKey();
-            if(count == 1 && car.getPoints() == value) {
-                System.out.println("There is a tie, two winners for the prize");
+        List<Car> sortedCars = new ArrayList<>();
+        for (Race r: racesList) {
+            for (Garage g : r.getGaragesInList()) {
+                sortedCars.addAll(g.getCars()); //intelli
             }
-            value = car.getPoints();
+        }
+        sortedCars.sort((entry1, entry2) -> Integer.compare(entry2.getPoints(), entry1.getPoints()));
+        for (Car sortedCar : sortedCars) {
+            System.out.println("- " + sortedCar.getBrand() + " " + sortedCar.getModel() + " from garage " + sortedCar.getStickGarage()
+                    + " " + sortedCar.getPoints() + " points");
+        }
+        for (int i = 0; i < Math.max(2,sortedCars.size()); i++) {
+            if(count == 1 && sortedCars.get(i).getPoints() == value) {
+                System.out.println("There is a tie, two winners for the prize: ");
+                System.out.println(sortedCars.get(0).getBrand() + " " + sortedCars.get(0).getModel() + " from Garage " + sortedCars.get(0).getStickGarage());
+                System.out.println(sortedCars.get(1).getBrand() + " " + sortedCars.get(1).getModel() + " from Garage " + sortedCars.get(0).getStickGarage());
+            }
+            value = sortedCars.get(i).getPoints();
             count++;
-            System.out.println("- " + car.getBrand() + " " + car.getModel() + " " + car.getPoints() + " points");
         }
     }
 
