@@ -34,6 +34,12 @@ package com.campusdual.racecontrol;
 * */
 
 import com.campusdual.Utils;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,39 +48,50 @@ import java.util.List;
 public class Control {
 
     public void menu() {
-        System.out.println("#################################################################");
-        System.out.println("#################### Welcome to RaceControl! ####################");
-        System.out.println("########################## Playing Rules ########################");
-        System.out.println("################## Register garages and their cars ##############");
-        System.out.println("################## Choose the type of car racings ###############");
-        System.out.println("################### Let the championship starts!#################");
-        System.out.println("#################################################################");
 
-        int choice = 0;
-        List<Garage> listGarage = new ArrayList<>();
-        List<Race> listRaces = new ArrayList<>();
-        do {
-            String nameG = Utils.string("Write a name for one garage: ");
-            Garage garage = generateGarage(nameG);
-            listGarage.add(garage);
-            choice = Utils.integer("More garages write 2, no more garages write -1: ");
-        }while (choice != -1);
+        Path filePath = Paths.get("src/main/resources/status.txt");
+        try(PrintWriter pw = new PrintWriter(new FileWriter(filePath.toFile()))){
+            pw.println("Program status");
+            System.out.println("#################################################################");
+            System.out.println("#################### Welcome to RaceControl! ####################");
+            System.out.println("########################## Playing Rules ########################");
+            System.out.println("################## Register garages and their cars ##############");
+            System.out.println("################## Choose the type of car racings ###############");
+            System.out.println("################### Let the championship starts!#################");
+            System.out.println("#################################################################");
 
-        int choice1 = 0;
-        do {
-            System.out.println("############################################################");
-            int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
-            if (option == 1) {
-                createStandardRace(listGarage, listRaces);
-            } else if (option == 2) {
-                createEliminationRace(listGarage, listRaces);
-            }
-            choice1 = Utils.integer("More races write 2, no more races write -1: ");
-        } while(choice1 != -1);
+            int choice = 0;
+            List<Garage> listGarage = new ArrayList<>();
+            List<Race> listRaces = new ArrayList<>();
+            do {
+                String nameG = Utils.string("Write a name for one garage: ");
+                Garage garage = generateGarage(nameG);
+                listGarage.add(garage);
+                choice = Utils.integer("More garages write 2, no more garages write -1: ");
+            }while (choice != -1);
 
-        String nameC = Utils.string("Chose a name for the Championship: ");
-        Championship championship = new Championship(nameC, listRaces);
-        championship.startChampionship();
+            int choice1 = 0;
+            do {
+                System.out.println("############################################################");
+                int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
+                if (option == 1) {
+                    createStandardRace(listGarage, listRaces);
+                } else if (option == 2) {
+                    createEliminationRace(listGarage, listRaces);
+                }
+                choice1 = Utils.integer("More races write 2, no more races write -1: ");
+            } while(choice1 != -1);
+
+            String nameC = Utils.string("Chose a name for the Championship: ");
+            Championship championship = new Championship(nameC, listRaces);
+            championship.startChampionship();
+
+
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public Garage generateGarage(String name){
@@ -181,5 +198,6 @@ public class Control {
     public static void main(String[] args) {
         Control control = new Control();
         control.menu();
+
     }
 }

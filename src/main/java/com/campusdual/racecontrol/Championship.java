@@ -76,8 +76,7 @@ public class Championship {
 
     public void showFinalScores() {
         System.out.println("#################### Final Scores for the Championship " + this.name +" #####################:");
-        int value = 0;
-        int count = 0;
+
         List<Car> sortedCars = new ArrayList<>();
         for (Race r: racesList) {
             for (Garage g : r.getGaragesInList()) {
@@ -85,17 +84,27 @@ public class Championship {
             }
         }
         sortedCars.sort((entry1, entry2) -> Integer.compare(entry2.getPoints(), entry1.getPoints()));
+        Set<String> notRepeatedCars = new HashSet<>();
         for (Car sortedCar : sortedCars) {
-            System.out.println("- " + sortedCar.getBrand() + " " + sortedCar.getModel() + " from garage " + sortedCar.getStickGarage()
-                    + " " + sortedCar.getPoints() + " points");
+            String carIdentifier = sortedCar.getBrand() + " " + sortedCar.getModel();
+            if (!notRepeatedCars.contains(carIdentifier)) {
+                System.out.println("- " + sortedCar.getBrand() + " " + sortedCar.getModel() + " from garage " + sortedCar.getStickGarage()
+                        + " " + sortedCar.getPoints() + " points");
+                notRepeatedCars.add(carIdentifier);
+            }
         }
-        for (int i = 0; i < Math.max(2,sortedCars.size()); i++) {
-            if(count == 1 && sortedCars.get(i).getPoints() == value) {
+
+        int value = 0;
+        String value1 = null;
+        int count = 0;
+        for (int i = 0; i < Math.max(2, sortedCars.size()); i++) {
+            if(count == 1 && sortedCars.get(i).getPoints() == value && !Objects.equals(sortedCars.get(i).getModel(), value1)) {
                 System.out.println("There is a tie, two winners for the prize: ");
                 System.out.println(sortedCars.get(0).getBrand() + " " + sortedCars.get(0).getModel() + " from Garage " + sortedCars.get(0).getStickGarage());
-                System.out.println(sortedCars.get(1).getBrand() + " " + sortedCars.get(1).getModel() + " from Garage " + sortedCars.get(0).getStickGarage());
+                System.out.println(sortedCars.get(1).getBrand() + " " + sortedCars.get(1).getModel() + " from Garage " + sortedCars.get(1).getStickGarage());
             }
             value = sortedCars.get(i).getPoints();
+            value1 = sortedCars.get(i).getModel();
             count++;
         }
     }
