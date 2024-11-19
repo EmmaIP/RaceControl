@@ -1,12 +1,17 @@
-Garages
-Garage Name: Garage1
-Car: Brand1_Model1_Garage1_5
-Car: Brand2_Model2_Garage1_0
-Car: Brand3_Model3_Garage1_0
-Garage Name: Garage2
-Car: Brand4_Model4_Garage2_10
-Car: Brand5_Model5_Garage2_11
-Car: Brand6_Model6_Garage2_5
-Championship: Champ1
-Race1_[com.campusdual.racecontrol.Garage@d44fc21]
-Race2_[com.campusdual.racecontrol.Garage@23faf8f2, com.campusdual.racecontrol.Garage@d44fc21]
+Garage: MotorCrash
+Car: Audi_A4_MotorCrash_1 points
+Car: Citroen_Xsara_MotorCrash_5 points
+Car: Toyota_Corolla_MotorCrash_10 points
+Car: Ford_Mondeo_MotorCrash_0 points
+Garage: Customcar
+Car: Seat_Ibiza_Customcar_0 points
+Car: Honda_Jazz_Customcar_0 points
+Car: Kia_Niro_Customcar_0 points
+Car: Peugeot_408_Customcar_5 points
+Garage: WheelsOnFire
+Car: Mercedes_ClaseC_WheelsOnFire_0 points
+Car: Porsche_Panamera_WheelsOnFire_0 points
+Car: BMW_Serie3_WheelsOnFire_10 points
+Race: Lemans
+Race: Imola
+Championship: Alpine

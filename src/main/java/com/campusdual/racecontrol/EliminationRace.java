@@ -51,7 +51,6 @@ public class EliminationRace extends Race{
 
     @Override
     public Map<Car, Integer> startRace() {
-
         System.out.println("Start race: " + this.getName());
         System.out.println("Warming Up");
         warmingUp();

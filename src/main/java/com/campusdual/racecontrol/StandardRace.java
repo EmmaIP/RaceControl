@@ -13,6 +13,9 @@ public class StandardRace extends Race{
         super(name);
         this.duration = duration;
     }
+    public StandardRace(String name) {
+        super(name);
+    }
 
     @Override
     public Map<Car, Integer> startRace() {

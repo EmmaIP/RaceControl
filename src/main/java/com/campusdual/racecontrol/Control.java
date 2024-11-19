@@ -36,7 +36,6 @@ package com.campusdual.racecontrol;
 import com.campusdual.Utils;
 
 import java.io.*;
-import java.nio.channels.Channel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -45,9 +44,9 @@ import java.util.List;
 
 
 public class Control {
-    private static final String GARAGE = "Garages";
-    private static final String GARAGE_NAME = "Garage Name: ";
     private static final String CAR = "Car: ";
+    private static final String GARAGE = "Garage: ";
+    private static final String RACE = "Race: ";
     private static final String CHAMPIONSHIP = "Championship: ";
 
     public void menu() {
@@ -86,22 +85,22 @@ public class Control {
         championship.startChampionship();
         saveThisInPDF(listGarage, championship);
     }
+
     public void saveThisInPDF(List<Garage> listGarage,  Championship championship){
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(PrintWriter pw = new PrintWriter(new FileWriter(filePath.toFile()))){
-            pw.println(GARAGE);
             for (Garage garage: listGarage) {
-                System.out.println(garage.getName() + " log name garage");
-                pw.println(GARAGE_NAME + garage.getName());
+                pw.println(GARAGE + garage.getName());
                 for (Car c : garage.getCars()) {
                     pw.println(CAR + c.getBrand() + "_" + c.getModel() + "_"
-                            + c.getStickGarage() + "_" + c.getPoints());
+                            + c.getStickGarage() + "_" + c.getPoints() + " points");
                 }
             }
-            pw.println(CHAMPIONSHIP + championship.getName());
             for (Race r : championship.getRacesList()){
-                pw.println(r.getName() + "_" + r.getGaragesInList());
+                pw.println(RACE + r.getName());
             }
+            pw.println(CHAMPIONSHIP + championship.getName());
+
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,22 +110,25 @@ public class Control {
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;
-            List<Garage> garageList =new ArrayList<>();
-            Garage garageOneToOne=null;
+            List<Garage> garageList = new ArrayList<>();
+            Garage garageOneToOne = null;
             while((line = br.readLine()) != null) {
-                if(line.contains("garageName:")){
-                    String[] a= line.split(" ");
-                    String nombreGaraje= a[1];
-                    garageOneToOne=new Garage(nombreGaraje);
-                    garageList.add(garageOneToOne);
+                if(line.contains(GARAGE)){
+                    String[] a = line.split(" ");
+                    if(a.length >= 2){
+                        String nameGarage = a[1];
+                        garageOneToOne = new Garage(nameGarage);
+                        garageList.add(garageOneToOne);
+                    }
                 }
-                if(line.contains("car:")){
+                if(line.contains(CAR)){
                     String[] a= line.split(" ")[1].split("_");
-                    String marca= a[0];
-                    String modelo= a[1];
-                    String stiker= a[2];
-                    Car car=new Car(marca,modelo);
-                    garageOneToOne.addCars(car);
+                    if(a.length >= 2){
+                        String brand = a[0];
+                        String model = a[1];
+                        Car car = new Car(brand,model);
+                        garageOneToOne.addCars(car);
+                    }
                 }
             }
             return garageList;
@@ -139,9 +141,25 @@ public class Control {
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;
-            Championship championship=null;
+            List<Race> raceList = new ArrayList<>();
+            Race raceOneToOne = null;
+            Championship championship = null;
             while((line = br.readLine()) != null) {
-
+                if(line.contains(RACE)){
+                    String[] a = line.split(" ");
+                    if(a.length >= 2){
+                        String nameRace = a[1];
+                       raceOneToOne = new StandardRace(nameRace); //no se puede instanciar Race TODO
+                    }
+                    raceList.add(raceOneToOne);
+                }
+                if(line.contains(CHAMPIONSHIP)){
+                    String[] a= line.split(" ");
+                    if(a.length >= 2){
+                        String nameChampionship = a[1];
+                        championship = new Championship(nameChampionship, raceList);
+                    }
+                }
             }
             return championship;
         } catch (IOException e) {
@@ -181,9 +199,11 @@ public class Control {
         else if(option1 == 2){
             garagesInStandardRace(listGarage, raceS);
         }
-        System.out.println("All the cars are ready, " + raceS.getName() + " starts!");
-        System.out.println("############################################################");
         listRaces.add(raceS);
+        System.out.println("All the cars are ready, " + raceS.getName() + " starts!");
+        raceS.showPodium(raceS.startRace());
+        System.out.println("############################################################");
+
     }
 
     private static void garagesInStandardRace(List<Garage> listGarage, StandardRace raceS) {
@@ -230,9 +250,11 @@ public class Control {
         else if (option2 == 2){
             garagesInEliminationRace(listGarage, raceE);
         }
-        System.out.println("All the cars are ready " + raceE.getName() + " starts!");
-        System.out.println("############################################################");
         listRaces.add(raceE);
+        System.out.println("All the cars are ready " + raceE.getName() + " starts!");
+        raceE.showPodium(raceE.startRace());
+        System.out.println("############################################################");
+
     }
 
     private static void garagesInEliminationRace(List<Garage> listGarage, EliminationRace raceE) {
