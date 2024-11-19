@@ -8,6 +8,12 @@ public class Garage {
     private String name;
     private List<Car> carsList;
 
+    public Garage(String name) {
+        this.name = name;
+        this.carsList = new ArrayList<>();
+
+    }
+
     public Garage(String name, List<Car> cars) {
         this.name = name;
         this.carsList = cars;
