@@ -1,17 +1,58 @@
 Garage: MotorCrash
-Car: Audi_A4_MotorCrash_1 points
-Car: Citroen_Xsara_MotorCrash_5 points
-Car: Toyota_Corolla_MotorCrash_10 points
+Car: Audi_A4_MotorCrash_0 points
+Car: Citroen_Xsara_MotorCrash_0 points
+Car: Toyota_Corolla_MotorCrash_0 points
 Car: Ford_Mondeo_MotorCrash_0 points
 Garage: Customcar
 Car: Seat_Ibiza_Customcar_0 points
-Car: Honda_Jazz_Customcar_0 points
+Car: Honda_Jazz_Customcar_5 points
 Car: Kia_Niro_Customcar_0 points
-Car: Peugeot_408_Customcar_5 points
+Car: Peugeot_408_Customcar_0 points
 Garage: WheelsOnFire
 Car: Mercedes_ClaseC_WheelsOnFire_0 points
-Car: Porsche_Panamera_WheelsOnFire_0 points
-Car: BMW_Serie3_WheelsOnFire_10 points
-Race: Lemans
-Race: Imola
-Championship: Alpine
+Car: Porsche_Panamera_WheelsOnFire_10 points
+Car: BMW_Serie3_WheelsOnFire_0 points
+Garage: SpaceCar
+Car: Suzuki_Swift_SpaceCar_0 points
+Championship: MixChamp
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: STRace_StandardRace
+Championship: MixChamp
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: STRace_StandardRace
+Championship: StaCham
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: warmingRaceEliminationRace_EliminationRace
+Race: Stanrace_StandardRace
+Race: SRace_StandardRace
+Race: ERace_EliminationRace
+Race: STRace_StandardRace

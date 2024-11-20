@@ -15,6 +15,9 @@ public class EliminationRace extends Race{
         super(name);
         this.warmingUpMinutes = warmingUpMinutes;
     }
+    public EliminationRace(String name) {
+        super(name);
+    }
 
     public int getWarmingUpMinutes() {
         return this.warmingUpMinutes;

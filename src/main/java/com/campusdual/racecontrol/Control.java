@@ -28,9 +28,9 @@ package com.campusdual.racecontrol;
     ✓ Un Torneo tendrá puntuaciones para cada coche que participe. Se entregarán puntuaciones a los coches del podio de
       cada carrera, de mayor a menor, de manera proporcional. Estas puntuaciones son acumulativas para cada coche.
     ✓ El ganador del torneo será el coche que más puntos tenga al finalizar el torneo. En caso de empate, se divide el premio.
-    En la aplicación, se pretende guardar el estado del programa, de manera que no sea necesario insertar de nuevo la
-    información de los Coches, Garajes, Carreras y Torneos en un fichero.
-    Este fichero debe cargarse cada vez que se inicia el programa y debe actualizarse antes de finalizar el programa.
+    ✓ En la aplicación, se pretende guardar el estado del programa, de manera que no sea necesario insertar de nuevo la
+      información de los Coches, Garajes, Carreras y Torneos en un fichero.
+    ✓ Este fichero debe cargarse cada vez que se inicia el programa y debe actualizarse antes de finalizar el programa.
 * */
 
 import com.campusdual.Utils;
@@ -55,21 +55,48 @@ public class Control {
         System.out.println("########################## Playing Rules ########################");
         System.out.println("################## Register garages and their cars ##############");
         System.out.println("################## Choose the type of car racing ###############");
-        System.out.println("################### Let the championship starts!#################");
+        System.out.println("################### Let the championship starts #################");
         System.out.println("#################################################################");
 
-        int choice = 0;
+
         List<Garage> listGarage = new ArrayList<>();
         List<Race> listRaces = new ArrayList<>();
+        List<Championship> listChampionships = new ArrayList<>();
 
-        do {
-            String nameG = Utils.string("Write a name for one garage: ");
-            Garage garage = generateGarage(nameG);
-            listGarage.add(garage);
-            choice = Utils.integer("More garages write 2, no more garages write -1: ");
-        }while (choice != -1);
+        int loadChampionships = Utils.integer("Load championships write 2, not load championships write -1: ");
+        if (loadChampionships == 2) {
+            Championship loadedChampionship = openChampionshipPdf();
+            listChampionships.add(loadedChampionship);
+            if (!listChampionships.isEmpty()) {
+                listRaces = loadedChampionship.getRacesList();
+                listChampionships.add(loadedChampionship);
+                System.out.println("Championships loaded successfully from status file.");
+            } else {
+                System.out.println("No championships found");
+            }
+        }
 
-        int choice1 = 0;
+        int loadGarages = Utils.integer("Load garages write 2, not load garages write -1: ");
+        if (loadGarages == 2) {
+            listGarage = openGaragesPdf();
+            if (!listGarage.isEmpty()) {
+                System.out.println("Garages loaded successfully from status file.");
+            } else {
+                System.out.println("No garages found");
+            }
+        }
+        int addMoreG = Utils.integer("Add more garages write 2, not add more garages write -1: ");
+        if(addMoreG ==2){
+            int moreGarages = 0;
+            do {
+                String nameG = Utils.string("Write a name for one garage: ");
+                Garage garage = generateGarage(nameG);
+                listGarage.add(garage);
+                moreGarages = Utils.integer("More garages write 2, no more garages write -1: ");
+            }while (moreGarages != -1);
+        }
+
+        int moreRaces = 0;
         do {
             int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
             if (option == 1) {
@@ -77,16 +104,37 @@ public class Control {
             } else if (option == 2) {
                 createEliminationRace(listGarage, listRaces);
             }
-            choice1 = Utils.integer("More races write 2, no more races write -1: ");
-        } while(choice1 != -1);
+            moreRaces = Utils.integer("More races write 2, no more races write -1: ");
+        } while(moreRaces != -1);
 
-        String nameC = Utils.string("Chose a name for the Championship: ");
-        Championship championship = new Championship(nameC, listRaces);
-        championship.startChampionship();
-        saveThisInPDF(listGarage, championship);
+        int moreChampionships = 0;
+        do {
+            String nameC = Utils.string("Chose a name for the Championship: ");
+            Championship championship = new Championship(nameC, listRaces);
+            championship.startChampionship();
+            listChampionships.add(championship);
+            saveThisInPDF(listGarage, listChampionships);
+            moreChampionships = Utils.integer("More championships write 2, no more championships write -1: ");
+
+            if (moreChampionships == 2) {
+                listRaces.clear();
+                int typeRace = 0;
+                do {
+                    int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
+                    if (option == 1) {
+                        createStandardRace(listGarage, listRaces);
+                    } else if (option == 2) {
+                        createEliminationRace(listGarage, listRaces);
+                    }
+                    typeRace = Utils.integer("More races write 2, no more races write -1: ");
+                } while (typeRace != -1);
+            }
+        } while (moreChampionships != -1);
+
+
     }
 
-    public void saveThisInPDF(List<Garage> listGarage,  Championship championship){
+    public void saveThisInPDF(List<Garage> listGarage, List<Championship> listChampionships){
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(PrintWriter pw = new PrintWriter(new FileWriter(filePath.toFile()))){
             for (Garage garage: listGarage) {
@@ -96,10 +144,13 @@ public class Control {
                             + c.getStickGarage() + "_" + c.getPoints() + " points");
                 }
             }
-            for (Race r : championship.getRacesList()){
-                pw.println(RACE + r.getName());
+
+            for (Championship ch: listChampionships) {
+                pw.println(CHAMPIONSHIP + ch.getName());
+                for (Race r : ch.getRacesList()){
+                    pw.println(RACE + r.getName() + "_" + r.getClass().getSimpleName());
+                }
             }
-            pw.println(CHAMPIONSHIP + championship.getName());
 
         }catch (IOException e) {
             e.printStackTrace();
@@ -146,10 +197,14 @@ public class Control {
             Championship championship = null;
             while((line = br.readLine()) != null) {
                 if(line.contains(RACE)){
-                    String[] a = line.split(" ");
+                    String[] a = line.split(" ")[1].split("_");;
                     if(a.length >= 2){
-                        String nameRace = a[1];
-                       raceOneToOne = new StandardRace(nameRace); //no se puede instanciar Race TODO
+                        String nameRace = a[0];
+                        if (line.contains("StandardRace")) {
+                            raceOneToOne = new StandardRace(nameRace);
+                        } else if (line.contains("EliminationRace")) {
+                            raceOneToOne = new EliminationRace(nameRace);
+                        }
                     }
                     raceList.add(raceOneToOne);
                 }
@@ -165,21 +220,20 @@ public class Control {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
     public Garage generateGarage(String name){
         List<Car> carsList = new ArrayList<>();
-        int number = 0;
+        int moreCars = 0;
         do {
             String brand = Utils.string("Car brand: ");
             String model = Utils.string("Car model: ");
             System.out.println("More cars write 2");
-            number = Utils.integer("No more cars, write -1: ");
+            moreCars = Utils.integer("No more cars, write -1: ");
             Car car = new Car(brand, model);
             carsList.add(car);
-        } while (number != -1);
+        } while (moreCars != -1);
         Garage garage = new Garage(name, carsList);
         return garage;
     }
