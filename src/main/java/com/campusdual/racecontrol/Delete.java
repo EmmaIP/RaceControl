@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 public class Delete {
     public static void main(String[] args) {
-        Path filePath = Paths.get("src/main/resources/status.txt");
+        Path filePath = Paths.get("src/main/resources/status.json");
         try {
             Files.deleteIfExists(filePath);
             System.out.println("File deleted");

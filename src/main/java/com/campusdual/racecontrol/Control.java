@@ -34,6 +34,10 @@ package com.campusdual.racecontrol;
 * */
 
 import com.campusdual.Utils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -52,10 +56,10 @@ public class Control {
     public void menu() {
         System.out.println("#################################################################");
         System.out.println("#################### Welcome to RaceControl! ####################");
-        System.out.println("########################## Playing Rules ########################");
+        System.out.println("########################## Playing Rules: ########################");
         System.out.println("################## Register garages and their cars ##############");
         System.out.println("################## Choose the type of car racing ###############");
-        System.out.println("################### Let the championship starts #################");
+        System.out.println("############################ Let´s go ###########################");
         System.out.println("#################################################################");
 
 
@@ -63,39 +67,76 @@ public class Control {
         List<Race> listRaces = new ArrayList<>();
         List<Championship> listChampionships = new ArrayList<>();
 
-        int loadChampionships = Utils.integer("Load championships write 2, not load championships write -1: ");
-        if (loadChampionships == 2) {
-            Championship loadedChampionship = openChampionshipPdf();
-            listChampionships.add(loadedChampionship);
-            if (!listChampionships.isEmpty()) {
-                listRaces = loadedChampionship.getRacesList();
-                listChampionships.add(loadedChampionship);
-                System.out.println("Championships loaded successfully from status file.");
-            } else {
-                System.out.println("No championships found");
+        int number = 0;
+        do{
+            System.out.println("1. Load Championships");
+            System.out.println("2. Load Garages and their cars");
+            System.out.println("3. Create Garages and Cars");
+            System.out.println("4. Create Races");
+            System.out.println("5. Start Championship and create others");
+            System.out.println("6. Exit");
+            number = Utils.integer("Choose an option: ");
+
+            switch (number) {
+                case 1:
+                    System.out.println("Load Championships");
+                    loadChampionships(listRaces, listChampionships);
+                    break;
+                case 2:
+                    System.out.println("Load Garages and their cars");
+                    loadGarages();
+                    break;
+                case 3:
+                    System.out.println("Create Garages and Cars");
+                    createGarages(listGarage);
+                    break;
+                case 4:
+                    System.out.println("Create Races");
+                    createRaces(listGarage, listRaces);
+                    break;
+                case 5:
+                    System.out.println("Start Championship and create others");
+                    createChampionship(listGarage, listRaces, listChampionships);
+                    break;
+                case 6:
+                    System.out.println("Bye!");
+                    break;
+                default:
+                    System.out.println("Invalid number. Please try again.");
             }
         }
+        while(number != 6);
 
-        int loadGarages = Utils.integer("Load garages write 2, not load garages write -1: ");
-        if (loadGarages == 2) {
-            listGarage = openGaragesPdf();
-            if (!listGarage.isEmpty()) {
-                System.out.println("Garages loaded successfully from status file.");
-            } else {
-                System.out.println("No garages found");
+    }
+
+    private void createChampionship(List<Garage> listGarage, List<Race> listRaces, List<Championship> listChampionships) {
+        int moreChampionships = 0;
+        do {
+            String nameC = Utils.string("Chose a name for the Championship: ");
+            Championship championship = new Championship(nameC, listRaces);
+            championship.startChampionship();
+            listChampionships.add(championship);
+            //saveThisInPDF(listGarage, listChampionships);
+            saveInJson(listGarage, listChampionships);
+            moreChampionships = Utils.integer("More championships write 2, no more championships write -1: ");
+
+            if (moreChampionships == 2) {
+                listRaces.clear();
+                int moreRace = 0;
+                do {
+                    int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
+                    if (option == 1) {
+                        createStandardRace(listGarage, listRaces);
+                    } else if (option == 2) {
+                        createEliminationRace(listGarage, listRaces);
+                    }
+                    moreRace = Utils.integer("More races write 2, no more races write -1: ");
+                } while (moreRace != -1);
             }
-        }
-        int addMoreG = Utils.integer("Add more garages write 2, not add more garages write -1: ");
-        if(addMoreG ==2){
-            int moreGarages = 0;
-            do {
-                String nameG = Utils.string("Write a name for one garage: ");
-                Garage garage = generateGarage(nameG);
-                listGarage.add(garage);
-                moreGarages = Utils.integer("More garages write 2, no more garages write -1: ");
-            }while (moreGarages != -1);
-        }
+        } while (moreChampionships != -1);
+    }
 
+    private void createRaces(List<Garage> listGarage, List<Race> listRaces) {
         int moreRaces = 0;
         do {
             int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
@@ -106,45 +147,55 @@ public class Control {
             }
             moreRaces = Utils.integer("More races write 2, no more races write -1: ");
         } while(moreRaces != -1);
+    }
 
-        int moreChampionships = 0;
+    private void createGarages(List<Garage> listGarage) {
+        int moreGarages = 0;
         do {
-            String nameC = Utils.string("Chose a name for the Championship: ");
-            Championship championship = new Championship(nameC, listRaces);
-            championship.startChampionship();
-            listChampionships.add(championship);
-            saveThisInPDF(listGarage, listChampionships);
-            moreChampionships = Utils.integer("More championships write 2, no more championships write -1: ");
+            String nameG = Utils.string("Write a name for one garage: ");
+            Garage garage = generateGarage(nameG);
+            listGarage.add(garage);
+            moreGarages = Utils.integer("More garages write 2, no more garages write -1: ");
+        }while (moreGarages != -1);
+    }
 
-            if (moreChampionships == 2) {
-                listRaces.clear();
-                int typeRace = 0;
-                do {
-                    int option = Utils.integer("For Standard Race write 1, for Elimination Race write 2: ");
-                    if (option == 1) {
-                        createStandardRace(listGarage, listRaces);
-                    } else if (option == 2) {
-                        createEliminationRace(listGarage, listRaces);
-                    }
-                    typeRace = Utils.integer("More races write 2, no more races write -1: ");
-                } while (typeRace != -1);
+    private void loadGarages() {
+        int loadGarages = Utils.integer("Load garages write 2, not load garages write -1: ");
+        if (loadGarages == 2) {
+            List<Garage> listGarage = openGaragesPDF();
+            if (!listGarage.isEmpty()) {
+                System.out.println("Garages loaded successfully from status file.");
+            } else {
+                System.out.println("No garages found");
             }
-        } while (moreChampionships != -1);
+        }
+    }
 
+    private void loadChampionships(List<Race> listRaces, List<Championship> listChampionships) {
+        int loadChampionships = Utils.integer("Load championships write 2, not load championships write -1: ");
+        if (loadChampionships == 2) {
+            Championship loadedChampionship = openChampionshipJson();
+            listChampionships.add(loadedChampionship);
+            if (!listChampionships.isEmpty()) {
+                listRaces = loadedChampionship.getRacesList();
+                listChampionships.add(loadedChampionship);
+                System.out.println("Championships loaded successfully from status file.");
+            } else {
+                System.out.println("No championships found");
+            }
+        }
 
     }
 
     public void saveThisInPDF(List<Garage> listGarage, List<Championship> listChampionships){
-        Path filePath = Paths.get("src/main/resources/status.txt");
+        Path filePath = Paths.get("src/main/resources/status.json");
         try(PrintWriter pw = new PrintWriter(new FileWriter(filePath.toFile()))){
             for (Garage garage: listGarage) {
                 pw.println(GARAGE + garage.getName());
                 for (Car c : garage.getCars()) {
-                    pw.println(CAR + c.getBrand() + "_" + c.getModel() + "_"
-                            + c.getStickGarage() + "_" + c.getPoints() + " points");
+                    pw.println(CAR + c.getBrand() + "_" + c.getModel() + "_" + c.getStickGarage());
                 }
             }
-
             for (Championship ch: listChampionships) {
                 pw.println(CHAMPIONSHIP + ch.getName());
                 for (Race r : ch.getRacesList()){
@@ -157,7 +208,29 @@ public class Control {
         }
     }
 
-    public List<Garage> openGaragesPdf(){
+    public void saveInJson(List<Garage> listGarage, List<Championship> listChampionships){
+        JsonObject garages = new JsonObject();
+        JsonArray componentsArray = new JsonArray();
+        for (Garage g: listGarage) {
+            componentsArray.add(createItemGarage(g.getName()));
+        }
+        garages.add("Garages", componentsArray);
+        try(FileWriter fw = new FileWriter("src/main/resources/computerList.json")){
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(garages);
+            fw.write(json);
+            fw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public JsonObject createItemGarage(String nameG){
+        JsonObject component = new JsonObject();
+        component.addProperty("Name Garage", nameG);
+        return component;
+    }
+
+    public List<Garage> openGaragesPDF(){
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;
@@ -188,7 +261,7 @@ public class Control {
             return null;
         }
     }
-    public Championship openChampionshipPdf(){
+    public Championship openChampionshipJson(){
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;
@@ -278,12 +351,14 @@ public class Control {
     }
 
     public int oneGarageInRace(List<Garage> listGarage) {
-        System.out.println("List of garages");
-        for (int i = 0; i < listGarage.size(); i++) {
-            System.out.println(i +". "+ listGarage.get(i).getName());
-        }
-        int numberG = Utils.integer("Write the number of the chosen garage: ");
-        return numberG;
+
+            System.out.println("List of garages");
+            for (int i = 0; i < listGarage.size(); i++) {
+                System.out.println(i +". "+ listGarage.get(i).getName());
+            }
+            int numberG = Utils.integer("Write the number of the chosen garage: ");
+            return numberG;
+
     }
 
     public void createEliminationRace(List<Garage> listGarage, List<Race> listRaces) {
