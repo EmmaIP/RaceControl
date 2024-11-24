@@ -48,10 +48,13 @@ import java.util.List;
 
 
 public class Control {
-    private static final String CAR = "Car: ";
-    private static final String GARAGE = "Garage: ";
-    private static final String RACE = "Race: ";
-    private static final String CHAMPIONSHIP = "Championship: ";
+
+    private static final String CAR = "Cars";
+    private static final String CAR_BRAND = "Brand";
+    private static final String CAR_MODEL = "Model";
+    private static final String GARAGE = "Name Garage";
+    private static final String RACE = "Name Race";
+    private static final String CHAMPIONSHIP = "Name Championship";
 
     public void menu() {
         System.out.println("#################################################################");
@@ -92,17 +95,27 @@ public class Control {
                     break;
                 case 4:
                     System.out.println("Create Races");
-                    createRaces(listGarage, listRaces);
+                    if(!listGarage.isEmpty()){
+                        createRaces(listGarage, listRaces);
+                    }
+                    else{
+                        System.out.println("There must be garages created");
+                    }
                     break;
                 case 5:
                     System.out.println("Start Championship and create others");
-                    createChampionship(listGarage, listRaces, listChampionships);
+                    if(!listRaces.isEmpty() && !listGarage.isEmpty()) {
+                        createChampionship(listGarage, listRaces, listChampionships);
+                    }
+                    else{
+                        System.out.println("There must be races created");
+                    }
                     break;
                 case 6:
-                    System.out.println("Bye!");
+                    System.out.println("Bye, see you!");
                     break;
                 default:
-                    System.out.println("Invalid number. Please try again.");
+                    System.out.println("Invalid option. Please try again.");
             }
         }
         while(number != 6);
@@ -160,35 +173,28 @@ public class Control {
     }
 
     private void loadGarages() {
-        int loadGarages = Utils.integer("Load garages write 2, not load garages write -1: ");
-        if (loadGarages == 2) {
-            List<Garage> listGarage = openGaragesPDF();
-            if (!listGarage.isEmpty()) {
-                System.out.println("Garages loaded successfully from status file.");
-            } else {
-                System.out.println("No garages found");
-            }
+        List<Garage> listGarage = openGaragesPDF();
+        if (!listGarage.isEmpty()) {
+            System.out.println("Garages loaded successfully from status file.");
+        } else {
+            System.out.println("No garages found");
         }
     }
 
     private void loadChampionships(List<Race> listRaces, List<Championship> listChampionships) {
-        int loadChampionships = Utils.integer("Load championships write 2, not load championships write -1: ");
-        if (loadChampionships == 2) {
-            Championship loadedChampionship = openChampionshipJson();
+        Championship loadedChampionship = openChampionshipPDF();
+        listChampionships.add(loadedChampionship);
+        if (!listChampionships.isEmpty()) {
+            listRaces = loadedChampionship.getRacesList();
             listChampionships.add(loadedChampionship);
-            if (!listChampionships.isEmpty()) {
-                listRaces = loadedChampionship.getRacesList();
-                listChampionships.add(loadedChampionship);
-                System.out.println("Championships loaded successfully from status file.");
-            } else {
-                System.out.println("No championships found");
-            }
+            System.out.println("Championships loaded successfully from status file.");
+        } else {
+            System.out.println("No championships found");
         }
-
     }
 
     public void saveThisInPDF(List<Garage> listGarage, List<Championship> listChampionships){
-        Path filePath = Paths.get("src/main/resources/status.json");
+        Path filePath = Paths.get("src/main/resources/status.txt");
         try(PrintWriter pw = new PrintWriter(new FileWriter(filePath.toFile()))){
             for (Garage garage: listGarage) {
                 pw.println(GARAGE + garage.getName());
@@ -209,26 +215,82 @@ public class Control {
     }
 
     public void saveInJson(List<Garage> listGarage, List<Championship> listChampionships){
-        JsonObject garages = new JsonObject();
-        JsonArray componentsArray = new JsonArray();
+        JsonObject status = new JsonObject();
+
+        JsonArray componentsArrayG = new JsonArray();
         for (Garage g: listGarage) {
-            componentsArray.add(createItemGarage(g.getName()));
+            JsonObject garages = new JsonObject();
+            garages.addProperty("Name Garage", g.getName());
+            JsonArray componentsArrayC = new JsonArray();
+            for (Car c : g.getCars()) {
+                JsonObject cars = new JsonObject();
+                cars.addProperty("Brand",c.getBrand());
+                cars.addProperty("Model",c.getModel());
+                componentsArrayC.add(cars);
+            }
+            garages.add("Cars", componentsArrayC);
+            componentsArrayG.add(garages);
         }
-        garages.add("Garages", componentsArray);
-        try(FileWriter fw = new FileWriter("src/main/resources/computerList.json")){
+        JsonArray componentsArrayCh = new JsonArray();
+        for (Championship ch: listChampionships) {
+            JsonObject championships = new JsonObject();
+            championships.addProperty("Name Championship", ch.getName());
+            JsonArray componentsArrayR = new JsonArray();
+            for (Race r : ch.getRacesList()){
+                JsonObject races = new JsonObject();
+                races.addProperty("Name Race",r.getName());
+                componentsArrayR.add(races);
+            }
+            championships.add("Races", componentsArrayR);
+            componentsArrayCh.add(championships);
+        }
+        status.add("Garages", componentsArrayG);
+        status.add("Championships", componentsArrayCh);
+
+        try(FileWriter fw = new FileWriter("src/main/resources/status.json")){
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String json = gson.toJson(garages);
+            String json = gson.toJson(status);
             fw.write(json);
-            fw.flush();
+            //gson.toJson(status, fw);
+            //fw.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public JsonObject createItemGarage(String nameG){
-        JsonObject component = new JsonObject();
-        component.addProperty("Name Garage", nameG);
-        return component;
+
+    public List<Garage> openGaragesJson(){                        /////TODO
+        Path filePath = Paths.get("src/main/resources/status.json");
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
+            String line;
+            List<Garage> garageList = new ArrayList<>();
+            Garage garageOneToOne = null;
+            while((line = br.readLine()) != null) {
+                if(line.contains(GARAGE)){
+                    String[] a = line.split(" ");
+                    if(a.length >= 2){
+                        String nameGarage = a[1];
+                        garageOneToOne = new Garage(nameGarage);
+                        garageList.add(garageOneToOne);
+                    }
+                }
+                if(line.contains(CAR_BRAND)){
+                    String[] a= line.split(" ");
+                    if(a.length >= 2){
+                        String brand = a[1];
+                        String model = a[1];
+                        Car car = new Car(brand,model);
+                        garageOneToOne.addCars(car);
+                    }
+                }
+            }
+            return garageList;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
+
+
 
     public List<Garage> openGaragesPDF(){
         Path filePath = Paths.get("src/main/resources/status.txt");
@@ -261,7 +323,7 @@ public class Control {
             return null;
         }
     }
-    public Championship openChampionshipJson(){
+    public Championship openChampionshipPDF(){
         Path filePath = Paths.get("src/main/resources/status.txt");
         try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
             String line;

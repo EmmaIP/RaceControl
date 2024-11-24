@@ -1,0 +1,85 @@
+{
+  "Garages": [
+    {
+      "Name Garage": "Garage1",
+      "Cars": [
+        {
+          "Brand": "Brand1",
+          "Model": "Model1"
+        },
+        {
+          "Brand": "Bran1",
+          "Model": "Mode1"
+        },
+        {
+          "Brand": "Bra1",
+          "Model": "Mod1"
+        },
+        {
+          "Brand": "Br1",
+          "Model": "Mo1"
+        }
+      ]
+    },
+    {
+      "Name Garage": "Garage2",
+      "Cars": [
+        {
+          "Brand": "Brand2",
+          "Model": "Model2"
+        },
+        {
+          "Brand": "Bran2",
+          "Model": "Mode2"
+        },
+        {
+          "Brand": "Bra2",
+          "Model": "Mod2"
+        },
+        {
+          "Brand": "Br2",
+          "Model": "Mo2"
+        }
+      ]
+    },
+    {
+      "Name Garage": "Garage3",
+      "Cars": [
+        {
+          "Brand": "Brand3",
+          "Model": "Model3"
+        },
+        {
+          "Brand": "Bran3",
+          "Model": "Mode3"
+        },
+        {
+          "Brand": "Bra3",
+          "Model": "Mod3"
+        },
+        {
+          "Brand": "Br3",
+          "Model": "Mo3"
+        }
+      ]
+    }
+  ],
+  "Championships": [
+    {
+      "Name Championship": "Champ1",
+      "Races": [
+        {
+          "Name Race": "Elimi2"
+        }
+      ]
+    },
+    {
+      "Name Championship": "Champ4",
+      "Races": [
+        {
+          "Name Race": "Elimi2"
+        }
+      ]
+    }
+  ]
+}

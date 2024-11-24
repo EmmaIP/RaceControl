@@ -37,7 +37,7 @@ public class EliminationRace extends Race{
         }
         System.out.println("List of cars:");
         for (Car c : this.getCarsInRace()) {
-            System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage() + " Garage");
+            System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage());
         }
 
     }
@@ -47,7 +47,7 @@ public class EliminationRace extends Race{
             for (Car c : this.getCarsInRace()) {
                 c.randomSpeed();
                 System.out.println( c.getBrand() + " " + c.getModel() + " from "
-                        + c.getStickGarage() + " Garage speed: " + c.getSpeed() + " Km/h");
+                        + c.getStickGarage() + " speed: " + c.getSpeed() + " Km/h");
             }
         }
     }
@@ -73,7 +73,7 @@ public class EliminationRace extends Race{
                 distanceByCar.put(c, distanceByCar.get(c) + distanceByMinute);
 
                 System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage()
-                        + " Garage, speed: " + c.getSpeed() + " Km/h, total distance: " + distanceByCar.get(c) + " km");
+                        + " , speed: " + c.getSpeed() + " Km/h, total distance: " + distanceByCar.get(c) + " km");
             }
             System.out.println(ELIMINATION_MINUTE + " minute passed");
 
@@ -85,7 +85,7 @@ public class EliminationRace extends Race{
             }
             remainingCars.remove(lastCar);
             System.out.println(lastCar.getBrand() + " " + lastCar.getModel() + " from "
-                    + lastCar.getStickGarage() + " Garage is out");
+                    + lastCar.getStickGarage() + " is out");
         }
 
         return distanceByCar;

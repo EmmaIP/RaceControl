@@ -25,17 +25,20 @@ public class StandardRace extends Race{
         for (Car c : this.getCarsInRace()) {
             distanceByCar.put(c, 0);
         }
+
         for (int i = 0; i < this.duration; i++) {
             System.out.println("Hour " + (i + 1));
             for (Car c : this.getCarsInRace()) {
+                int distanceByHour = 0;
                 for (int j = 0; j < 60; j++) {
                     c.randomSpeed();
+                    int currentSpeed = c.getSpeed();
+                    distanceByHour += (int)Math.floor((double)currentSpeed/60);
                 }
-                int distanceByHour = c.getSpeed();
+                System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage()
+                        + " speed: " + c.getSpeed() + " km/h");
                 int totalDistanceByCar = distanceByCar.get(c) + distanceByHour;
                 distanceByCar.put(c,totalDistanceByCar);
-                System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage()
-                        + " Garage, speed: " + c.getSpeed() + " Km/h");
             }
         }
         return distanceByCar;
@@ -50,7 +53,7 @@ public class StandardRace extends Race{
         }
         System.out.println("List of cars:");
         for (Car c : this.getCarsInRace()) {
-            System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage() + " Garage");
+            System.out.println(c.getBrand() + " " + c.getModel() + " from " + c.getStickGarage());
         }
     }
 

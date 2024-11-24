@@ -78,7 +78,7 @@ public abstract class Race {
             Car car = entry.getKey();
             int distance = entry.getValue();
             System.out.println((i + 1) + ". " + car.getBrand() + " " + car.getModel() + " from "
-                    + car.getStickGarage() + " Garage, total distance: " + distance + " km");
+                    + car.getStickGarage() + ", total distance: " + distance + " km");
         }
     }
 
