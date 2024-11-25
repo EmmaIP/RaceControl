@@ -34,17 +34,14 @@ package com.campusdual.racecontrol;
 * */
 
 import com.campusdual.Utils;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 
 
 public class Control {
@@ -87,7 +84,7 @@ public class Control {
                     break;
                 case 2:
                     System.out.println("Load Garages and their cars");
-                    loadGarages();
+                    loadGarages(listGarage);
                     break;
                 case 3:
                     System.out.println("Create Garages and Cars");
@@ -129,7 +126,6 @@ public class Control {
             Championship championship = new Championship(nameC, listRaces);
             championship.startChampionship();
             listChampionships.add(championship);
-            //saveThisInPDF(listGarage, listChampionships);
             saveInJson(listGarage, listChampionships);
             moreChampionships = Utils.integer("More championships write 2, no more championships write -1: ");
 
@@ -172,9 +168,10 @@ public class Control {
         }while (moreGarages != -1);
     }
 
-    private void loadGarages() {
-        List<Garage> listGarage = openGaragesPDF();
-        if (!listGarage.isEmpty()) {
+    private void loadGarages(List<Garage> listGarage) {
+        List<Garage> loadedGarages = openGaragesJson();
+        if (!loadedGarages.isEmpty()) {
+            listGarage.addAll(loadedGarages);
             System.out.println("Garages loaded successfully from status file.");
         } else {
             System.out.println("No garages found");
@@ -182,7 +179,7 @@ public class Control {
     }
 
     private void loadChampionships(List<Race> listRaces, List<Championship> listChampionships) {
-        Championship loadedChampionship = openChampionshipPDF();
+        Championship loadedChampionship = openChampionshipsJson();
         listChampionships.add(loadedChampionship);
         if (!listChampionships.isEmpty()) {
             listRaces = loadedChampionship.getRacesList();
@@ -193,30 +190,9 @@ public class Control {
         }
     }
 
-    public void saveThisInPDF(List<Garage> listGarage, List<Championship> listChampionships){
-        Path filePath = Paths.get("src/main/resources/status.txt");
-        try(PrintWriter pw = new PrintWriter(new FileWriter(filePath.toFile()))){
-            for (Garage garage: listGarage) {
-                pw.println(GARAGE + garage.getName());
-                for (Car c : garage.getCars()) {
-                    pw.println(CAR + c.getBrand() + "_" + c.getModel() + "_" + c.getStickGarage());
-                }
-            }
-            for (Championship ch: listChampionships) {
-                pw.println(CHAMPIONSHIP + ch.getName());
-                for (Race r : ch.getRacesList()){
-                    pw.println(RACE + r.getName() + "_" + r.getClass().getSimpleName());
-                }
-            }
-
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void saveInJson(List<Garage> listGarage, List<Championship> listChampionships){
         JsonObject status = new JsonObject();
-
         JsonArray componentsArrayG = new JsonArray();
         for (Garage g: listGarage) {
             JsonObject garages = new JsonObject();
@@ -251,111 +227,62 @@ public class Control {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String json = gson.toJson(status);
             fw.write(json);
-            //gson.toJson(status, fw);
-            //fw.flush();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-    public List<Garage> openGaragesJson(){                        /////TODO
+    public List<Garage> openGaragesJson() {
         Path filePath = Paths.get("src/main/resources/status.json");
-        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
-            String line;
-            List<Garage> garageList = new ArrayList<>();
-            Garage garageOneToOne = null;
-            while((line = br.readLine()) != null) {
-                if(line.contains(GARAGE)){
-                    String[] a = line.split(" ");
-                    if(a.length >= 2){
-                        String nameGarage = a[1];
-                        garageOneToOne = new Garage(nameGarage);
-                        garageList.add(garageOneToOne);
-                    }
-                }
-                if(line.contains(CAR_BRAND)){
-                    String[] a= line.split(" ");
-                    if(a.length >= 2){
-                        String brand = a[1];
-                        String model = a[1];
-                        Car car = new Car(brand,model);
-                        garageOneToOne.addCars(car);
-                    }
+        List<Garage> garageList = new ArrayList<>();
+        Garage garageOneToOne = null;
+        try{
+            Object obj = new JsonParser().parse(new FileReader(filePath.toFile()));
+            JsonObject jo = (JsonObject) obj;
+            JsonArray arrayGarages = jo.getAsJsonArray("Garages");
+            for (int i = 0; i < arrayGarages.size(); i++) {
+                JsonElement elementG = arrayGarages.get(i);
+                String nameGarage = elementG.getAsJsonObject().get("Name Garage").getAsString();
+                garageOneToOne = new Garage(nameGarage);
+                garageList.add(garageOneToOne);
+                JsonArray arrayCars = elementG.getAsJsonObject().get("Cars").getAsJsonArray();
+                for (int j = 0; j < arrayCars.size(); j++) {
+                    JsonElement elementoC = arrayCars.get(j);
+                    String brand = elementoC.getAsJsonObject().get("Brand").getAsString();
+                    String model = elementoC.getAsJsonObject().get("Model").getAsString();
+                    Car car = new Car(brand, model);
+                    garageOneToOne.addCars(car);
                 }
             }
-            return garageList;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
+        return garageList;
     }
-
-
-
-    public List<Garage> openGaragesPDF(){
-        Path filePath = Paths.get("src/main/resources/status.txt");
-        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
-            String line;
-            List<Garage> garageList = new ArrayList<>();
-            Garage garageOneToOne = null;
-            while((line = br.readLine()) != null) {
-                if(line.contains(GARAGE)){
-                    String[] a = line.split(" ");
-                    if(a.length >= 2){
-                        String nameGarage = a[1];
-                        garageOneToOne = new Garage(nameGarage);
-                        garageList.add(garageOneToOne);
-                    }
+    public Championship openChampionshipsJson() {
+        Path filePath = Paths.get("src/main/resources/status.json");
+        List<Race> raceList = new ArrayList<>();
+        Championship championship = null;
+        try{
+            Object obj = new JsonParser().parse(new FileReader(filePath.toFile()));
+            JsonObject jo = (JsonObject) obj;
+            JsonArray arrayChampionships = jo.getAsJsonArray("Championships");
+            for (int i = 0; i < arrayChampionships.size(); i++) {
+                JsonElement elementCh = arrayChampionships.get(i);
+                String nameChampionship = elementCh.getAsJsonObject().get("Name Championship").getAsString();
+                JsonArray arrayRaces = elementCh.getAsJsonObject().get("Races").getAsJsonArray();
+                for (int j = 0; j < arrayRaces.size(); j++) {
+                    JsonElement elementoR = arrayRaces.get(j);
+                    String raceName = elementoR.getAsJsonObject().get("Name Race").getAsString();
+                    StandardRace race = new StandardRace(raceName);
+                    raceList.add(race);
                 }
-                if(line.contains(CAR)){
-                    String[] a= line.split(" ")[1].split("_");
-                    if(a.length >= 2){
-                        String brand = a[0];
-                        String model = a[1];
-                        Car car = new Car(brand,model);
-                        garageOneToOne.addCars(car);
-                    }
-                }
-            }
-            return garageList;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public Championship openChampionshipPDF(){
-        Path filePath = Paths.get("src/main/resources/status.txt");
-        try(BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
-            String line;
-            List<Race> raceList = new ArrayList<>();
-            Race raceOneToOne = null;
-            Championship championship = null;
-            while((line = br.readLine()) != null) {
-                if(line.contains(RACE)){
-                    String[] a = line.split(" ")[1].split("_");;
-                    if(a.length >= 2){
-                        String nameRace = a[0];
-                        if (line.contains("StandardRace")) {
-                            raceOneToOne = new StandardRace(nameRace);
-                        } else if (line.contains("EliminationRace")) {
-                            raceOneToOne = new EliminationRace(nameRace);
-                        }
-                    }
-                    raceList.add(raceOneToOne);
-                }
-                if(line.contains(CHAMPIONSHIP)){
-                    String[] a= line.split(" ");
-                    if(a.length >= 2){
-                        String nameChampionship = a[1];
-                        championship = new Championship(nameChampionship, raceList);
-                    }
-                }
+                championship = new Championship(nameChampionship, raceList);
             }
             return championship;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
-        return null;
     }
 
     public Garage generateGarage(String name){
@@ -413,14 +340,12 @@ public class Control {
     }
 
     public int oneGarageInRace(List<Garage> listGarage) {
-
-            System.out.println("List of garages");
-            for (int i = 0; i < listGarage.size(); i++) {
-                System.out.println(i +". "+ listGarage.get(i).getName());
-            }
-            int numberG = Utils.integer("Write the number of the chosen garage: ");
-            return numberG;
-
+        System.out.println("List of garages");
+        for (int i = 0; i < listGarage.size(); i++) {
+            System.out.println(i +". "+ listGarage.get(i).getName());
+        }
+        int numberG = Utils.integer("Write the number of the chosen garage: ");
+        return numberG;
     }
 
     public void createEliminationRace(List<Garage> listGarage, List<Race> listRaces) {
@@ -465,9 +390,16 @@ public class Control {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         Control control = new Control();
         control.menu();
+
+        /*List<Garage> listGarage = control.openGaragesJson();
+        for (int i = 0; i <listGarage.size() ; i++) {
+            System.out.println(listGarage.get(i).getName());
+        }
+        Championship champ = control.openChampionshipsJson();
+        System.out.println(champ.getName());*/
 
     }
 }
