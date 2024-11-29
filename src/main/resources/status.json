@@ -66,18 +66,15 @@
   ],
   "Championships": [
     {
-      "Name Championship": "Champ1",
+      "Name Championship": "Champ98",
       "Races": [
         {
-          "Name Race": "Elimi2"
-        }
-      ]
-    },
-    {
-      "Name Championship": "Champ4",
-      "Races": [
+          "Name Race": "Stan3",
+          "Type Race": "com.campusdual.racecontrol.StandardRace"
+        },
         {
-          "Name Race": "Elimi2"
+          "Name Race": "Elimin8",
+          "Type Race": "com.campusdual.racecontrol.EliminationRace"
         }
       ]
     }

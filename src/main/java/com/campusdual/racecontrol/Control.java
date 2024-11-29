@@ -215,6 +215,7 @@ public class Control {
             for (Race r : ch.getRacesList()){
                 JsonObject races = new JsonObject();
                 races.addProperty("Name Race",r.getName());
+                races.addProperty("Type Race",r.getClass().getName());
                 componentsArrayR.add(races);
             }
             championships.add("Races", componentsArrayR);
@@ -274,8 +275,16 @@ public class Control {
                 for (int j = 0; j < arrayRaces.size(); j++) {
                     JsonElement elementoR = arrayRaces.get(j);
                     String raceName = elementoR.getAsJsonObject().get("Name Race").getAsString();
-                    StandardRace race = new StandardRace(raceName);
-                    raceList.add(race);
+                    String raceType = elementoR.getAsJsonObject().get("Type Race").getAsString();
+                    if(raceType.contains("StandardRace")){
+                        StandardRace raceS = new StandardRace(raceName);
+                        raceList.add(raceS);
+                    }
+                    else{
+                        EliminationRace raceE = new EliminationRace(raceName);
+                        raceList.add(raceE);
+                    }
+
                 }
                 championship = new Championship(nameChampionship, raceList);
             }
